@@ -4,6 +4,7 @@ require 'prawn'
 require 'prawn/measurement_extensions'
 require 'pry'
 require 'date'
+include Prawn::Measurements
 
 WEEKS = 1
 HOUR_LABELS = [nil, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, nil, nil]
@@ -25,26 +26,8 @@ FONTS = {
 FILE_NAME = "time_block_pages.pdf"
 PAGE_SIZE = [cm2pt(12.1), cm2pt(22.2)] # Travelers Notebook Regular Size
 # Order is top, right, bottom, left
-LEFT_PAGE_MARGINS = [36, 72, 36, 36]
-RIGHT_PAGE_MARGINS = [36, 36, 36, 72]
-
-# If you have
-SPRINT_EPOCH = Date.parse('2023-02-15')
-SPRINT_LENGTH = 14
-
-# Names by day of week, 0 is Sunday.
-OOOS_BY_WDAY = [nil, nil, ['Juan'], ['Kelly'], nil, ['Alex', 'Edna'], nil]
-
-# Repeating tasks by day of week, 0 is Sunday. Nested index is the row.
-TASKS_BY_WDAY = [
-  { 0 => 'Plan meals' },
-  { 0 => 'Update standup notes', 12 => 'Italian', 13 => 'Walk dog' },
-  { 0 => 'Update standup notes', 12 => 'Italian', 13 => 'Walk dog' },
-  { 0 => 'Update standup notes', 12 => 'Italian', 13 => 'Walk dog' },
-  { 0 => 'Update standup notes', 12 => 'Italian', 13 => 'Walk dog' },
-  { 0 => 'Update standup notes', 12 => 'Italian', 13 => 'Walk dog' },
-  { 0 => 'Plan next week' },
-]
+LEFT_PAGE_MARGINS = [cm2pt(1), cm2pt(1.5),cm2pt(1),cm2pt(1) ]
+RIGHT_PAGE_MARGINS = [cm2pt(1), cm2pt(1),cm2pt(1),cm2pt(1.5)]
 
 # From https://stackoverflow.com/a/24753003/203673
 #
@@ -100,11 +83,11 @@ def business_days_left_in_year(date)
   days = business_days_between(date, Date.new(date.year, 12, 31))
   case days
   when 0
-    "last work day of the year"
+    "last workday of year"
   when 1
-    "1 work day left in the year"
+    "1 workday left in year"
   else
-    "#{days} work days in the year"
+    "#{days} workdays left in year"
   end
 end
 
@@ -192,7 +175,7 @@ def week_ahead_page first_day, last_day
     text "The Week Ahead", inline_format: true, size: 20, align: :left
   end
   grid([1, first_column],[1, last_column]).bounding_box do
-    range = "#{first_day.strftime('%A, %B %-d')} — #{last_day.strftime('%A, %B %-d, %Y')}"
+    range = "#{first_day.strftime('%a, %b %-d')} — #{last_day.strftime('%a, %b %-d, %Y')}"
     text range, color: MEDIUM_COLOR, align: :left
   end
   # Header Right
@@ -290,7 +273,7 @@ def daily_tasks_page date
   checkbox_size = grid.row_height - (2 * checkbox_padding)
   (6..last_row).each_with_index do |row, index|
     grid(row, 0).bounding_box do
-      draw_checkbox checkbox_size, checkbox_padding, TASKS_BY_WDAY[date.wday][index]
+      draw_checkbox checkbox_size, checkbox_padding
     end
   end
 end
@@ -311,14 +294,14 @@ def daily_calendar_page date
   left_header = date.strftime(DATE_LONG)
   # right_header = date.strftime("Day %j")
   right_header = date.strftime("%A")
-  left_subhed = date.strftime("Quarter #{quarter(date)} Week %W Day %j")
-  # right_subhed = business_days_left_in_year(date)
-  right_subhed = business_days_left_in_sprint(date)
+  left_subhed = date.strftime("Q#{quarter(date)} W%W D%j")
+  right_subhed = business_days_left_in_year(date)
+  #right_subhed = business_days_left_in_sprint(date)
   grid([0, first_column],[1, 1]).bounding_box do
-    text left_header, size: 20, align: :left
+    text left_header, size: 15, align: :left
   end
   grid([0, 2],[0, last_column]).bounding_box do
-    text right_header, size: 20, align: :right
+    text right_header, size: 15, align: :right
   end
   grid([1, first_column],[1, last_column]).bounding_box do
     text left_subhed, color: MEDIUM_COLOR, align: :left
@@ -379,7 +362,7 @@ def weekend_page saturday, sunday
   body_row_count = header_row_count + task_row_count + hour_row_count
 
   # Use a grid to do the math to divide the page into two columns:
-  define_grid(columns: 2, rows: 1, column_gutter: 24, row_gutter: 0)
+  define_grid(columns: 2, rows: 1, column_gutter: 10, row_gutter: 0)
   first = grid(0,0)
   second = grid(0,1)
   # Then use that to build a bounding box for each column and redefine the grid in there.
@@ -395,7 +378,7 @@ def weekend_page saturday, sunday
       left_header = date.strftime("%A")
       left_sub_header = date.strftime("%B %-d")
       grid([0, 0],[0, 1]).bounding_box do
-        text left_header, size: 20, align: :left
+        text left_header, size: 15, align: :left
       end
       grid([1, 0],[1, 1]).bounding_box do
         text left_sub_header, color: MEDIUM_COLOR, align: :left
@@ -423,7 +406,7 @@ def weekend_page saturday, sunday
       checkbox_size = grid.row_height - (2 * checkbox_padding)
       ((task_start_row + 1)..task_last_row).each_with_index do |row, index|
         grid(row, 0).bounding_box do
-          draw_checkbox checkbox_size, checkbox_padding, TASKS_BY_WDAY[date.wday][index]
+          draw_checkbox checkbox_size, checkbox_padding
         end
       end
 
@@ -568,14 +551,6 @@ Prawn::Document.generate(FILE_NAME, margin: RIGHT_PAGE_MARGINS, print_scaling: :
 
     weekend_page sunday.next_day(6), sunday.next_day(7)
 
-    OOOS_BY_WDAY
-      .each_with_index
-      .reject { |names, _| names.nil? }
-      .flat_map { |names, wday| names.map {|name| [name, sunday.next_day(wday)] } }
-      .sort_by { |name, date| name } # Sort by name or date, as you like
-      .each { |name, date| one_on_one_page name, date }
-
     sunday = sunday.next_day(7)
   end
 end
-
