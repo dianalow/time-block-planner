@@ -7,7 +7,7 @@ Forked from [drewish](https://github.com/drewish/planner) for yet another take o
 Assuming you've got [Ruby](http://www.ruby-lang.org/en/) and [Bundler](https://bundler.io)
 installed you can just run:
 ```
-git clone git@github.com:drewish/planner.git
+git clone git@github.com:dianalow/time-block-planner.git
 cd planner
 bundle install
 ```
