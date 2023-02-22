@@ -26,8 +26,8 @@ FONTS = {
 FILE_NAME = "time_block_pages.pdf"
 PAGE_SIZE = [cm2pt(12.1), cm2pt(22.2)] # Travelers Notebook Regular Size
 # Order is top, right, bottom, left
-LEFT_PAGE_MARGINS = [cm2pt(1), cm2pt(1.5),cm2pt(1),cm2pt(1) ]
-RIGHT_PAGE_MARGINS = [cm2pt(1), cm2pt(1),cm2pt(1),cm2pt(1.5)]
+LEFT_PAGE_MARGINS = [24, 48, 24, 24 ]
+RIGHT_PAGE_MARGINS = [24, 24, 24, 48]
 
 # From https://stackoverflow.com/a/24753003/203673
 #
@@ -158,7 +158,7 @@ end
 def week_ahead_page first_day, last_day
   # We don't start our own page since we don't know if this is the first week or one
   # of several weeks in a file.
-  hole_punches
+  #hole_punches
 
   header_row_count = 2
   body_row_count = HOUR_COUNT * 2
@@ -172,7 +172,7 @@ def week_ahead_page first_day, last_day
 
   # Header Left
   grid([0, first_column],[0, last_column]).bounding_box do
-    text "The Week Ahead", inline_format: true, size: 20, align: :left
+    text "The Week Ahead", inline_format: true, size: 15, align: :left
   end
   grid([1, first_column],[1, last_column]).bounding_box do
     range = "#{first_day.strftime('%a, %b %-d')} — #{last_day.strftime('%a, %b %-d, %Y')}"
@@ -180,7 +180,7 @@ def week_ahead_page first_day, last_day
   end
   # Header Right
   grid([0, 3],[0, last_column]).bounding_box do
-    text first_day.strftime("Week %W"), inline_format: true, size: 20, align: :right
+    text first_day.strftime("Week %W"), inline_format: true, size: 15, align: :right
   end
   grid([1, 3],[1, last_column]).bounding_box do
     text "Quarter #{quarter(first_day)}", color: MEDIUM_COLOR, align: :right
@@ -217,10 +217,10 @@ def daily_tasks_page date
   left_header = date.strftime(DATE_LONG) # date.strftime("Week %W")
   right_header = date.strftime("%A") # date.strftime("Day %j")
   grid([0, 0],[1, 2]).bounding_box do
-    text left_header, size: 20, align: :left
+    text left_header, size: 15, align: :left
   end
   grid([0, 2],[1, 3]).bounding_box do
-    text right_header, size: 20, align: :right
+    text right_header, size: 15, align: :right
   end
 
   # Daily metrics
@@ -510,7 +510,7 @@ def one_on_one_page name, date
   begin_new_page :left
 end
 
-Prawn::Document.generate(FILE_NAME, margin: RIGHT_PAGE_MARGINS, print_scaling: :none) do
+Prawn::Document.generate(FILE_NAME, page_size: PAGE_SIZE, margin: RIGHT_PAGE_MARGINS, print_scaling: :none) do
   font_families.update(FONTS)
   font(FONTS.keys.first)
   stroke_color MEDIUM_COLOR
