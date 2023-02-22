@@ -8,7 +8,7 @@ Assuming you've got [Ruby](http://www.ruby-lang.org/en/) and [Bundler](https://b
 installed you can just run:
 ```
 git clone git@github.com:dianalow/time-block-planner.git
-cd planner
+cd time-block-planner
 bundle install
 ```
 
