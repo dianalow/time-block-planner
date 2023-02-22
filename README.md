@@ -2,6 +2,8 @@
 
 Forked from [drewish](https://github.com/drewish/planner) for yet another take on Cal Newport's Time-Block Planner.
 
+This version produces the planner in [Traveler's Company](https://www.travelers-company.com/)'s Traveler's Notebook Regular size.
+
 ## Installation
 
 Assuming you've got [Ruby](http://www.ruby-lang.org/en/) and [Bundler](https://bundler.io)
