@@ -23,7 +23,7 @@ FONTS = {
   }
 }
 FILE_NAME = "time_block_pages.pdf"
-PAGE_SIZE = 'LETTER' # Could also do 'A4'
+PAGE_SIZE = [cm2pt(12.1), cm2pt(22.2)] # Travelers Notebook Regular Size
 # Order is top, right, bottom, left
 LEFT_PAGE_MARGINS = [36, 72, 36, 36]
 RIGHT_PAGE_MARGINS = [36, 36, 36, 72]
