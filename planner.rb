@@ -24,7 +24,7 @@ FONTS = {
   }
 }
 FILE_NAME = "time_block_pages.pdf"
-PAGE_SIZE = [cm2pt(12.1), cm2pt(22.2)] # Travelers Notebook Regular Size
+PAGE_SIZE = [cm2pt(11.0), cm2pt(21.0)] # Travelers Notebook Regular Size
 # Order is top, right, bottom, left
 LEFT_PAGE_MARGINS = [24, 48, 24, 24 ]
 RIGHT_PAGE_MARGINS = [24, 24, 24, 48]
@@ -159,7 +159,7 @@ def week_ahead_page first_day, last_day
   # We don't start our own page since we don't know if this is the first week or one
   # of several weeks in a file.
   #hole_punches
-
+  #begin_new_page :left
   header_row_count = 2
   body_row_count = HOUR_COUNT * 2
   first_column = 0
@@ -172,7 +172,7 @@ def week_ahead_page first_day, last_day
 
   # Header Left
   grid([0, first_column],[0, last_column]).bounding_box do
-    text "The Week Ahead", inline_format: true, size: 15, align: :left
+    text "The Week Ahead", inline_format: true, size: 12, align: :left
   end
   grid([1, first_column],[1, last_column]).bounding_box do
     range = "#{first_day.strftime('%a, %b %-d')} — #{last_day.strftime('%a, %b %-d, %Y')}"
@@ -180,10 +180,10 @@ def week_ahead_page first_day, last_day
   end
   # Header Right
   grid([0, 3],[0, last_column]).bounding_box do
-    text first_day.strftime("Week %W"), inline_format: true, size: 15, align: :right
+    text first_day.strftime("Week %W"), inline_format: true, size: 12, align: :right
   end
   grid([1, 3],[1, last_column]).bounding_box do
-    text "Quarter #{quarter(first_day)}", color: MEDIUM_COLOR, align: :right
+    text "Q#{quarter(first_day)}", color: MEDIUM_COLOR, align: :right
   end
 
   # Horizontal lines
@@ -217,10 +217,10 @@ def daily_tasks_page date
   left_header = date.strftime(DATE_LONG) # date.strftime("Week %W")
   right_header = date.strftime("%A") # date.strftime("Day %j")
   grid([0, 0],[1, 2]).bounding_box do
-    text left_header, size: 15, align: :left
+    text left_header, size: 12, align: :left
   end
   grid([0, 2],[1, 3]).bounding_box do
-    text right_header, size: 15, align: :right
+    text right_header, size: 12, align: :right
   end
 
   # Daily metrics
@@ -298,10 +298,10 @@ def daily_calendar_page date
   right_subhed = business_days_left_in_year(date)
   #right_subhed = business_days_left_in_sprint(date)
   grid([0, first_column],[1, 1]).bounding_box do
-    text left_header, size: 15, align: :left
+    text left_header, size: 12, align: :left
   end
   grid([0, 2],[0, last_column]).bounding_box do
-    text right_header, size: 15, align: :right
+    text right_header, size: 12, align: :right
   end
   grid([1, first_column],[1, last_column]).bounding_box do
     text left_subhed, color: MEDIUM_COLOR, align: :left
@@ -378,7 +378,7 @@ def weekend_page saturday, sunday
       left_header = date.strftime("%A")
       left_sub_header = date.strftime("%B %-d")
       grid([0, 0],[0, 1]).bounding_box do
-        text left_header, size: 15, align: :left
+        text left_header, size: 12, align: :left
       end
       grid([1, 0],[1, 1]).bounding_box do
         text left_sub_header, color: MEDIUM_COLOR, align: :left
